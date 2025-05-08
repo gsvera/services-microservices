@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserServicesCalendarRepository extends JpaRepository<UserServicesCalendar, Long> {
     @Modifying
@@ -15,4 +16,6 @@ public interface UserServicesCalendarRepository extends JpaRepository<UserServic
     int deleteAllCalendarByUser(String idUser);
     @Query(value = "SELECT u FROM UserServicesCalendar u WHERE idUser = ?1")
     List<UserServicesCalendar> getCalendarByUser(String idUser);
+    @Query(value = "SELECT c FROM UserServicesCalendar c WHERE idUser = ?1 AND day = ?2")
+    Optional<UserServicesCalendar> getTimeByProvider(String idUser, String day);
 }

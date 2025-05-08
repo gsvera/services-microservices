@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MenuServiceSerices {
+public class MenuServiceServices {
     private final MenuServiceRepository menuServiceRepository;
     public ResponseDTO _GetMenuServiceByIdUser(String idUser){
         return ResponseDTO.builder().items(

@@ -3,7 +3,6 @@ package com.esthetic.servicesmicroservices.controller;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.UserServicesCalendarDTO;
 import com.esthetic.servicesmicroservices.dto.UserServicesCalendarExceptionDTO;
-import com.esthetic.servicesmicroservices.entity.UserServicesCalendarException;
 import com.esthetic.servicesmicroservices.services.CalendarServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

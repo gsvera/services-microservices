@@ -25,6 +25,12 @@ public class CalendarServices {
                 userServicesCalendarRepository.getCalendarByUser(idUser).stream().map(item -> new UserServicesCalendarDTO(item)).collect(Collectors.toList())
         ).build();
     }
+    public ResponseDTO _GetTimeByProvider(String idUser, String day) {
+        return ResponseDTO.builder().items(
+                new UserServicesCalendarDTO(
+                        userServicesCalendarRepository.getTimeByProvider(idUser, day).get()
+                )).build();
+    }
     public ResponseDTO _GetExceptionCalendarByUser(String idUser, LocalDateTime dateTime) {
         Optional<UserServicesCalendarException> userServicesCalendarExceptionOption = userServicesCalendarExceptionRepository.findByIdUserAndDateString(idUser, dateTime);
         return ResponseDTO.builder().items(
