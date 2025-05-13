@@ -7,6 +7,10 @@ import com.esthetic.servicesmicroservices.repository.ScheduleServiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ScheduleServiceServices {
@@ -14,5 +18,33 @@ public class ScheduleServiceServices {
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
         scheduleServiceRepository.save(new ScheduleService(scheduleServiceDTO));
         return ResponseDTO.builder().message("Reservación generada con éxito").build();
+    }
+    public ResponseDTO _FindAllByProvider(String idProvider, LocalDateTime date) {
+        return ResponseDTO.builder().items(
+                scheduleServiceRepository.findByIdProvider(idProvider, date)
+                        .stream()
+                        .map(item -> new ScheduleServiceDTO(item))
+                        .collect(Collectors.toList())
+        ).build();
+    }
+    public ResponseDTO _AcceptScheduleByProvider(Long idSchedule) {
+        Optional<ScheduleService> scheduleService = scheduleServiceRepository.findById(idSchedule);
+        if(scheduleService.isPresent()) {
+            scheduleService.orElseThrow().setStatusService(1); // SE USA 1 PARA CONFIRMAR EL SERVICIO
+            scheduleServiceRepository.save(scheduleService.get());
+            return ResponseDTO.builder().message("Se acepto la reservación con éxito").build();
+        }
+        return ResponseDTO.builder().error(true).message("No se encontro el registro").build();
+    }
+    public ResponseDTO _RejectScheduleByProvider(Long idSchedule, String textReject) {
+        Optional<ScheduleService> scheduleService = scheduleServiceRepository.findById(idSchedule);
+        if(scheduleService.isPresent()) {
+            scheduleService.orElseThrow().setStatusService(-1); // SE USA -1 PARA MARCAR COMO RECHAZADO
+            scheduleService.orElseThrow().setCommentReject(textReject);
+            scheduleServiceRepository.save(scheduleService.get());
+            return ResponseDTO.builder().message("Reservación rechazada con éxito").build();
+        } else {
+            return ResponseDTO.builder().error(true).message("No se encontro el registro").build();
+        }
     }
 }

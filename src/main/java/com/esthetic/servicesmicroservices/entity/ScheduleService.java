@@ -1,6 +1,7 @@
 package com.esthetic.servicesmicroservices.entity;
 
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -12,8 +13,10 @@ import java.time.LocalDateTime;
 public class ScheduleService {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "id_client")
-    private String idClient;
+    @OneToOne
+    @JoinColumn(name = "id_client", insertable = true, updatable = true, nullable = false)
+    @JsonBackReference
+    private User idClient;
     @Column(name = "id_provider")
     private String idProvider;
     @Column(name = "schedule_date")
@@ -26,8 +29,13 @@ public class ScheduleService {
     private String nameService;
     private int people;
     private Double amount;
+    @Column(name = "status_service")
+    private int statusService;
+    @Column(name = "comment_rejected")
+    private String commentReject;
+    public ScheduleService(){} // default constructor
     public ScheduleService(ScheduleServiceDTO scheduleServiceDTO) {
-        this.idClient = scheduleServiceDTO.idClient;
+        this.idClient = new User(scheduleServiceDTO.idClient);
         this.idProvider = scheduleServiceDTO.idProvider;
         this.scheduleDate = scheduleServiceDTO.scheduleDate;
         this.startTime = scheduleServiceDTO.startTime;
