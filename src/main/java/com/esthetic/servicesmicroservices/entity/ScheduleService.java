@@ -34,8 +34,7 @@ public class ScheduleService {
     @Column(name = "comment_rejected")
     private String commentReject;
     public ScheduleService(){} // default constructor
-    public ScheduleService(ScheduleServiceDTO scheduleServiceDTO) {
-        this.idClient = new User(scheduleServiceDTO.idClient);
+    public ScheduleService(ScheduleServiceDTO scheduleServiceDTO, User user) {
         this.idProvider = scheduleServiceDTO.idProvider;
         this.scheduleDate = scheduleServiceDTO.scheduleDate;
         this.startTime = scheduleServiceDTO.startTime;
@@ -43,5 +42,6 @@ public class ScheduleService {
         this.nameService = scheduleServiceDTO.nameService;
         this.people = scheduleServiceDTO.people;
         this.amount = scheduleServiceDTO.amount;
+        this.idClient = user;
     }
 }

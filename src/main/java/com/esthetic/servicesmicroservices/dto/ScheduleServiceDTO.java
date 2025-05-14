@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class ScheduleServiceDTO {
     public Long id;
     public UserDTO idClient;
+    public String idClientAux;
     public String idProvider;
     public LocalDateTime scheduleDate;
     public String startTime;

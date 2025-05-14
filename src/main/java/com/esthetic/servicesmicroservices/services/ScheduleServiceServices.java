@@ -3,7 +3,9 @@ package com.esthetic.servicesmicroservices.services;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
 import com.esthetic.servicesmicroservices.entity.ScheduleService;
+import com.esthetic.servicesmicroservices.entity.User;
 import com.esthetic.servicesmicroservices.repository.ScheduleServiceRepository;
+import com.esthetic.servicesmicroservices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +17,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ScheduleServiceServices {
     private final ScheduleServiceRepository scheduleServiceRepository;
+    private final UserRepository userRepository;
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
-        scheduleServiceRepository.save(new ScheduleService(scheduleServiceDTO));
-        return ResponseDTO.builder().message("Reservación generada con éxito").build();
+        Optional<User> user = userRepository.findById(scheduleServiceDTO.idClientAux);
+        if(user.isPresent()) {
+            scheduleServiceRepository.save(new ScheduleService(scheduleServiceDTO,user.get()));
+            return ResponseDTO.builder().message("Reservación generada con éxito").build();
+        }
+        return ResponseDTO.builder().error(true).message("Cliente no encontrado").build();
     }
     public ResponseDTO _FindAllByProvider(String idProvider, LocalDateTime date) {
         return ResponseDTO.builder().items(

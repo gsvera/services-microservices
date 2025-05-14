@@ -27,4 +27,7 @@ public class User {
     public User (UserDTO userDTO) {
         this.id = userDTO.id;
     }
+    public User(String idAux) {
+        this.id = idAux;
+    }
 }
