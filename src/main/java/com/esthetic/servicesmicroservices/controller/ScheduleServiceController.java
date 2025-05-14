@@ -24,11 +24,11 @@ public class ScheduleServiceController {
         }
     }
     @GetMapping("/find-all-by-provider/{id-provider}")
-    public ResponseDTO FindAllByProvider(@PathVariable(name = "id-provider") String idProvider, @RequestParam("date") String date) {
+    public ResponseDTO FindAllByProvider(@PathVariable(name = "id-provider") String idProvider, @RequestParam("date") String date, @RequestParam(name = "status-schedule", required = false) Integer statusSchedule) {
         try {
             LocalDate localDate = LocalDate.parse(date);
             LocalDateTime dateParse = localDate.atStartOfDay();
-            return scheduleServiceServices._FindAllByProvider(idProvider, dateParse);
+            return scheduleServiceServices._FindAllByProvider(idProvider, dateParse, statusSchedule);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,13 +27,20 @@ public class ScheduleServiceServices {
         }
         return ResponseDTO.builder().error(true).message("Cliente no encontrado").build();
     }
-    public ResponseDTO _FindAllByProvider(String idProvider, LocalDateTime date) {
-        return ResponseDTO.builder().items(
-                scheduleServiceRepository.findByIdProvider(idProvider, date)
-                        .stream()
-                        .map(item -> new ScheduleServiceDTO(item))
-                        .collect(Collectors.toList())
-        ).build();
+    public ResponseDTO _FindAllByProvider(String idProvider, LocalDateTime date, Integer statusSchedule) {
+        List<ScheduleServiceDTO> listSchedule = null;
+        if(statusSchedule != null) {
+            listSchedule = scheduleServiceRepository.findByIdProviderAndStatusService(idProvider, date, statusSchedule)
+                    .stream()
+                    .map(item -> new ScheduleServiceDTO(item))
+                    .collect(Collectors.toList());
+        } else {
+            listSchedule = scheduleServiceRepository.findByIdProvider(idProvider, date)
+                    .stream()
+                    .map(item -> new ScheduleServiceDTO(item))
+                    .collect(Collectors.toList());
+        }
+        return ResponseDTO.builder().items(listSchedule).build();
     }
     public ResponseDTO _AcceptScheduleByProvider(Long idSchedule) {
         Optional<ScheduleService> scheduleService = scheduleServiceRepository.findById(idSchedule);
