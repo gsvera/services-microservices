@@ -12,4 +12,6 @@ public interface ScheduleServiceRepository extends JpaRepository<ScheduleService
     List<ScheduleService> findByIdProvider(String idProvider, LocalDateTime date);
     @Query(value = "SELECT s FROM ScheduleService s LEFT JOIN FETCH s.idClient WHERE s.idProvider = ?1 AND s.scheduleDate = ?2 AND statusService = ?3")
     List<ScheduleService> findByIdProviderAndStatusService(String idProvider, LocalDateTime date, Integer statusService);
+    @Query(value = "SELECT s FROM ScheduleService s WHERE idProvider = ?1 AND scheduleDate = ?2")
+    List<ScheduleService> findScheduleByProvider(String idProvider, LocalDateTime date);
 }
