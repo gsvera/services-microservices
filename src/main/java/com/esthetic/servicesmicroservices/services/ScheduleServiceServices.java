@@ -9,6 +9,8 @@ import com.esthetic.servicesmicroservices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ public class ScheduleServiceServices {
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
         Optional<User> user = userRepository.findById(scheduleServiceDTO.idClientAux);
         if(user.isPresent()) {
+            scheduleServiceDTO.createdAt = Timestamp.from(Instant.now());
             scheduleServiceRepository.save(new ScheduleService(scheduleServiceDTO,user.get()));
             return ResponseDTO.builder().message("Reservación generada con éxito").build();
         }

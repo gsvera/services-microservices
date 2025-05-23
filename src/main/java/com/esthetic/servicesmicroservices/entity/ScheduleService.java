@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,6 +34,8 @@ public class ScheduleService {
     private int statusService;
     @Column(name = "comment_rejected")
     private String commentReject;
+    @Column(name = "created_at")
+    private Timestamp createdAt;
     public ScheduleService(){} // default constructor
     public ScheduleService(ScheduleServiceDTO scheduleServiceDTO, User user) {
         this.idProvider = scheduleServiceDTO.idProvider;
@@ -43,5 +46,6 @@ public class ScheduleService {
         this.people = scheduleServiceDTO.people;
         this.amount = scheduleServiceDTO.amount;
         this.idClient = user;
+        this.createdAt = scheduleServiceDTO.createdAt;
     }
 }

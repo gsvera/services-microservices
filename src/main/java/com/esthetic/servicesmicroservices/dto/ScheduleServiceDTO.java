@@ -2,6 +2,7 @@ package com.esthetic.servicesmicroservices.dto;
 
 import com.esthetic.servicesmicroservices.entity.ScheduleService;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 public class ScheduleServiceDTO {
@@ -17,6 +18,7 @@ public class ScheduleServiceDTO {
     public Double amount;
     public int statusService;
     public String commentReject;
+    public Timestamp createdAt;
     public ScheduleServiceDTO(){} // default constructor
     public ScheduleServiceDTO(ScheduleService scheduleService) {
         this.id = scheduleService.getId();
