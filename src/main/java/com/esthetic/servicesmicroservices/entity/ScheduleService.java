@@ -18,8 +18,14 @@ public class ScheduleService {
     @JoinColumn(name = "id_client", insertable = true, updatable = true, nullable = false)
     @JsonBackReference
     private User idClient;
-    @Column(name = "id_provider")
-    private String idProvider;
+    @OneToOne
+    @JoinColumn(name = "id_provider", insertable = true, updatable = true, nullable = false)
+    @JsonBackReference
+    private User idProvider;
+    @OneToOne
+    @JoinColumn(name = "id_provider", referencedColumnName = "id_user",insertable = false, updatable = false, nullable = false)
+    @JsonBackReference
+    private UserLocation userLocation;
     @Column(name = "schedule_date")
     private LocalDateTime scheduleDate;
     @Column(name = "start_time")
@@ -32,20 +38,19 @@ public class ScheduleService {
     private Double amount;
     @Column(name = "status_service")
     private int statusService;
-    @Column(name = "comment_rejected")
-    private String commentReject;
+    private String comments;
     @Column(name = "created_at")
     private Timestamp createdAt;
     public ScheduleService(){} // default constructor
     public ScheduleService(ScheduleServiceDTO scheduleServiceDTO, User user) {
-        this.idProvider = scheduleServiceDTO.idProvider;
         this.scheduleDate = scheduleServiceDTO.scheduleDate;
         this.startTime = scheduleServiceDTO.startTime;
         this.endTime = scheduleServiceDTO.endTime;
         this.nameService = scheduleServiceDTO.nameService;
         this.people = scheduleServiceDTO.people;
         this.amount = scheduleServiceDTO.amount;
-        this.idClient = user;
         this.createdAt = scheduleServiceDTO.createdAt;
+        this.idClient = user;
+        this.idProvider = new User(scheduleServiceDTO.idProviderAux);
     }
 }

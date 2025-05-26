@@ -9,7 +9,9 @@ public class ScheduleServiceDTO {
     public Long id;
     public UserDTO idClient;
     public String idClientAux;
-    public String idProvider;
+    public UserDTO idProvider;
+    public String idProviderAux;
+    public UserLocationDTO userLocationDTO;
     public LocalDateTime scheduleDate;
     public String startTime;
     public String endTime;
@@ -17,13 +19,11 @@ public class ScheduleServiceDTO {
     public int people;
     public Double amount;
     public int statusService;
-    public String commentReject;
+    public String comments;
     public Timestamp createdAt;
     public ScheduleServiceDTO(){} // default constructor
     public ScheduleServiceDTO(ScheduleService scheduleService) {
         this.id = scheduleService.getId();
-        this.idClient = new UserDTO(scheduleService.getIdClient());
-        this.idProvider = scheduleService.getIdProvider();
         this.scheduleDate = scheduleService.getScheduleDate();
         this.startTime = scheduleService.getStartTime();
         this.endTime = scheduleService.getEndTime();
@@ -31,6 +31,9 @@ public class ScheduleServiceDTO {
         this.people = scheduleService.getPeople();
         this.amount = scheduleService.getAmount();
         this.statusService = scheduleService.getStatusService();
-        this.commentReject = scheduleService.getCommentReject();
+        this.comments = scheduleService.getComments();
+        this.idClient = new UserDTO(scheduleService.getIdClient());
+        this.idProvider = new UserDTO(scheduleService.getIdProvider());
+        this.userLocationDTO = new UserLocationDTO(scheduleService.getUserLocation());
     }
 }

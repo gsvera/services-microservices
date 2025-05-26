@@ -23,6 +23,17 @@ public class ScheduleServiceController {
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
         }
     }
+    @GetMapping("/find-schedules-by-client/{id-client}")
+    public ResponseDTO FindSchedulesByClient(@PathVariable(name = "id-client") String idClient, @RequestParam String date) {
+        try{
+            LocalDate localDate = LocalDate.parse(date);
+            LocalDateTime localDateTime = localDate.atStartOfDay();
+            return scheduleServiceServices._FindSchedulesByClient(idClient, localDateTime);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
     @GetMapping("/find-all-by-provider/{id-provider}")
     public ResponseDTO FindAllByProvider(@PathVariable(name = "id-provider") String idProvider, @RequestParam("date") String date, @RequestParam(name = "status-schedule", required = false) Integer statusSchedule) {
         try {
@@ -34,19 +45,10 @@ public class ScheduleServiceController {
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
         }
     }
-    @PatchMapping("/accept-schedule-by-provider")
-    public ResponseDTO AcceptScheduleByProvider(@RequestParam("id-schedule") Long idSchedule) {
-     try{
-         return scheduleServiceServices._AcceptScheduleByProvider(idSchedule);
-     } catch (Exception ex) {
-         System.out.println(ex.getMessage());
-         return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
-     }
-    }
-    @PatchMapping("/reject-schedule-by-provider")
-    public ResponseDTO RejectScheduleByProvider(@RequestParam("id-schedule") Long idSchedule, @RequestParam("text-reject") String textReject) {
+    @PatchMapping("/change-status-schedule")
+    public ResponseDTO ChangeStatueSchedule(@RequestParam("id-schedule") Long idSchedule, @RequestParam("status-schedule") int statusSchedule, @RequestParam(name = "text-comments", required = false) String textComments) {
         try{
-            return scheduleServiceServices._RejectScheduleByProvider(idSchedule, textReject);
+            return  scheduleServiceServices._ChangeStatusSchedule(idSchedule,textComments, statusSchedule);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
