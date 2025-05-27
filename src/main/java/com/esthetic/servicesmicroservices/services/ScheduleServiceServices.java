@@ -24,6 +24,10 @@ public class ScheduleServiceServices {
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
         Optional<User> user = userRepository.findById(scheduleServiceDTO.idClientAux);
         if(user.isPresent()) {
+            Optional<ScheduleService> existScheduleService = scheduleServiceRepository.findExistSchedule(scheduleServiceDTO.idClientAux, scheduleServiceDTO.scheduleDate, scheduleServiceDTO.startTime, scheduleServiceDTO.endTime);
+            if(existScheduleService.isPresent()) {
+                return ResponseDTO.builder().error(true).message("Ya cuenta con una cita en el mismo rango de horario").items(existScheduleService.get()).build();
+            }
             scheduleServiceDTO.createdAt = Timestamp.from(Instant.now());
             scheduleServiceRepository.save(new ScheduleService(scheduleServiceDTO,user.get()));
             return ResponseDTO.builder().message("Reservación generada con éxito").build();
