@@ -2,6 +2,7 @@ package com.esthetic.servicesmicroservices.controller;
 
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
+import com.esthetic.servicesmicroservices.services.PushNotificationServices;
 import com.esthetic.servicesmicroservices.services.ScheduleServiceServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,17 @@ import java.time.LocalDateTime;
 public class ScheduleServiceController {
     @Autowired
     private ScheduleServiceServices scheduleServiceServices;
+    @Autowired
+    private PushNotificationServices pushNotificationServices;
+//    @PostMapping("/push-notification/{id-user}")
+//    public ResponseDTO PushNotification(@PathVariable(name = "id-user") String idUser) {
+//        try{
+//            return pushNotificationServices.prueba(idUser);
+//        } catch (Exception ex) {
+//            System.out.println(ex.getMessage());
+//            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+//        }
+//    }
     @PostMapping("/make-schedule-service")
     public ResponseDTO MakeScheduleService(@RequestBody ScheduleServiceDTO scheduleServiceDTO) {
         try {

@@ -24,6 +24,8 @@ public class User {
     private String email;
     private String lada;
     private String phone;
+    @Column(name = "token_notification")
+    private String tokenNotification;
     public User (UserDTO userDTO) {
         this.id = userDTO.id;
     }

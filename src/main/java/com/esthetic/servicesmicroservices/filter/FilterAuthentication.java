@@ -25,13 +25,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilterAuthentication extends OncePerRequestFilter {
 
-//    private static final List<String> EXCLUDED_PATH = Arrays.asList("/api/esthetic/catalog-type-service");
+    private static final List<String> EXCLUDED_PATH = Arrays.asList("/ws");
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        if(isExcludedPath(request)) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        if(isExcludedPath(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         final String token = getTokenFromRequest(request);
 
@@ -64,10 +64,10 @@ public class FilterAuthentication extends OncePerRequestFilter {
         writer.write("{\"error\": true, \"message\": \"" + message + "\"}");
         writer.flush();
     }
-//    private boolean isExcludedPath(HttpServletRequest request) {
-//        String requestPath = request.getRequestURI();
-//        return EXCLUDED_PATH.stream().anyMatch(requestPath::startsWith);
-//    }
+    private boolean isExcludedPath(HttpServletRequest request) {
+        String requestPath = request.getRequestURI();
+        return EXCLUDED_PATH.stream().anyMatch(requestPath::startsWith);
+    }
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
