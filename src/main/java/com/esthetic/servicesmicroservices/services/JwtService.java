@@ -23,7 +23,7 @@ public class JwtService {
     private String GetToken(Map<String, Object> extraClaims, User user) {
         return Jwts.builder()
                 .setClaims(extraClaims)
-                .setSubject(user.getEmail())
+                .setSubject(user.getId())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis()+1000*60*+60*+24)) // PARA QUE EL TOKEN EXPIRE EN UN DIA
                 .signWith(GetKey(), SignatureAlgorithm.HS256)
