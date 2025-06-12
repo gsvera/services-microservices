@@ -15,4 +15,6 @@ public class CatalogStatusScheduleService {
     private String statusName;
     @Column(name = "status_value")
     private String statusValue;
+    @Column(name = "status_done")
+    private Boolean statusDone;
 }

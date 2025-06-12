@@ -1,7 +1,9 @@
 package com.esthetic.servicesmicroservices.controller;
 
+import com.esthetic.servicesmicroservices.dto.ProviderRatingsDTO;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
+import com.esthetic.servicesmicroservices.services.ProviderRatingsServices;
 import com.esthetic.servicesmicroservices.services.PushNotificationServices;
 import com.esthetic.servicesmicroservices.services.ScheduleServiceServices;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,8 @@ import java.time.LocalDateTime;
 public class ScheduleServiceController {
     @Autowired
     private ScheduleServiceServices scheduleServiceServices;
+    @Autowired
+    private ProviderRatingsServices providerRatingsServices;
     @Autowired
     private PushNotificationServices pushNotificationServices;
 //    @PostMapping("/push-notification/{id-user}")
@@ -60,7 +64,35 @@ public class ScheduleServiceController {
     @PatchMapping("/change-status-schedule")
     public ResponseDTO ChangeStatueSchedule(@RequestParam("id-schedule") Long idSchedule, @RequestParam("status-schedule") int statusSchedule, @RequestParam(name = "text-comments", required = false) String textComments) {
         try{
-            return  scheduleServiceServices._ChangeStatusSchedule(idSchedule,textComments, statusSchedule);
+            return scheduleServiceServices._ChangeStatusSchedule(idSchedule,textComments, statusSchedule);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @GetMapping("/get-pending-rating-by-user/{id-user}")
+    public ResponseDTO GetPendingRatingByUser(@PathVariable(name = "id-user") String idUser) {
+        try{
+            return providerRatingsServices._GetPendingRatingByUser(idUser);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @PostMapping("/update-rating-by-service")
+    public ResponseDTO MakeRatingByService(@RequestBody ProviderRatingsDTO providerRatingsDTO) {
+        try {
+            return providerRatingsServices._UpdateRatingByService(providerRatingsDTO);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @DeleteMapping("/delete-rating-by-service")
+    public ResponseDTO DeleteRatingByService(@RequestParam(name = "id-rating") Long id) {
+        try{
+            providerRatingsServices._DeleteRatingByService(id);
+            return ResponseDTO.builder().message("ok").build();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();

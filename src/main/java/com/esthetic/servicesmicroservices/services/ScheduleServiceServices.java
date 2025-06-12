@@ -4,6 +4,7 @@ import com.esthetic.servicesmicroservices.dto.NotificationDTO;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
 import com.esthetic.servicesmicroservices.entity.CatalogStatusScheduleService;
+import com.esthetic.servicesmicroservices.entity.ProviderRatings;
 import com.esthetic.servicesmicroservices.entity.ScheduleService;
 import com.esthetic.servicesmicroservices.entity.User;
 import com.esthetic.servicesmicroservices.repository.CatalogStatusScheduleServiceRepository;
@@ -27,6 +28,7 @@ public class ScheduleServiceServices {
     private final CatalogStatusScheduleServiceRepository catalogStatusScheduleServiceRepository;
     private final NotificationService notificationService;
     private final PushNotificationServices pushNotificationServices;
+    private final ProviderRatingsServices providerRatingsServices;
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
         Optional<User> user = userRepository.findById(scheduleServiceDTO.idClientAux);
         if(user.isPresent()) {
@@ -84,6 +86,16 @@ public class ScheduleServiceServices {
             NotificationDTO notificationDTO = new NotificationDTO("update-schedule", "Actualización de cita", message, scheduleService.get().getId().toString());
             this._SendNotifications(scheduleService.get().getIdClient().getId(), notificationDTO);
             this._SendNotifications(scheduleService.get().getIdProvider().getId(), notificationDTO);
+
+            if(catalogStatusScheduleService.get().getStatusDone()) {
+                providerRatingsServices._MakeRatingsByService(
+                        new ProviderRatings(
+                                scheduleService.get().getIdClient().getId(),
+                                scheduleService.get().getIdProvider().getId(),
+                                scheduleService.get().getId()
+                        )
+                );
+            }
 
             return ResponseDTO.builder().message("Se actualizo el estatus con éxito").build();
         }

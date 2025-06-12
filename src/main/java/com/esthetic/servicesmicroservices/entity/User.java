@@ -26,6 +26,9 @@ public class User {
     private String phone;
     @Column(name = "token_notification")
     private String tokenNotification;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonBackReference
+    private InfoCompany userInfoCompany;
     public User (UserDTO userDTO) {
         this.id = userDTO.id;
     }

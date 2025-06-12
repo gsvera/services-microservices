@@ -9,6 +9,7 @@ public class UserDTO {
     public String email;
     public String lada;
     public String phone;
+    public InfoCompanyDTO infoCompanyDTO;
     public UserDTO(User user) {
         this.id = user.getId();
         this.firstName = user.getFirstName();
@@ -16,5 +17,8 @@ public class UserDTO {
         this.email = user.getEmail();
         this.lada = user.getLada();
         this.phone = user.getPhone();
+        if(user.getUserInfoCompany() != null) {
+            this.infoCompanyDTO = new InfoCompanyDTO(user.getUserInfoCompany());
+        }
     }
 }
