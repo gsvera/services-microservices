@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -47,5 +48,9 @@ public class ProviderRatingsServices {
         if(providerRatings.isPresent()) {
             providerRatingsRepository.delete(providerRatings.get());
         }
+    }
+    public ResponseDTO _GetRatingsByProvider(String idProvider) {
+        List<ProviderRatingsDTO> listRatings = providerRatingsRepository.findByIdProvider(idProvider);
+        return ResponseDTO.builder().items(listRatings).build();
     }
 }

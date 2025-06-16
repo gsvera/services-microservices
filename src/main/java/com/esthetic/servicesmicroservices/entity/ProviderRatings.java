@@ -11,13 +11,15 @@ import java.time.Instant;
 public class ProviderRatings {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "id_user")
-    private String idUser;
+    @OneToOne
+    @JoinColumn(name = "id_user", insertable = true, updatable = true, nullable = false)
+    @JsonBackReference
+    private User idUser;
     @OneToOne
     @JoinColumn(name = "id_provider", insertable = true, updatable = true, nullable = false)
     @JsonBackReference
     private User idProvider;
-    private Integer rating;
+    private Integer rating = 0;
     private String comment;
     @Column(name = "created_at")
     private Timestamp createdAt;
@@ -30,7 +32,7 @@ public class ProviderRatings {
     private Boolean isPending = true;
     public ProviderRatings(){} // default constructor
     public ProviderRatings(String idUser, String idProvider, Long idService) {
-        this.idUser = idUser;
+        this.idUser =  new User(idUser);
         this.idService = idService;
         this.createdAt = Timestamp.from(Instant.now());
         this.idProvider =  new User(idProvider);

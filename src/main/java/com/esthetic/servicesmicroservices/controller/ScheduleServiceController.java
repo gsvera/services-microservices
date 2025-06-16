@@ -98,4 +98,13 @@ public class ScheduleServiceController {
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
         }
     }
+    @GetMapping("/get-ratings-by-provider/{id-provider}")
+    public ResponseDTO GetRatingsByProvider(@PathVariable(name = "id-provider") String idProvider) {
+        try{
+            return providerRatingsServices._GetRatingsByProvider(idProvider);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
 }
