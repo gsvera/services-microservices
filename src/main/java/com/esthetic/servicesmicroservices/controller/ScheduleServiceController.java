@@ -1,5 +1,6 @@
 package com.esthetic.servicesmicroservices.controller;
 
+import com.esthetic.servicesmicroservices.dto.NotificationDTO;
 import com.esthetic.servicesmicroservices.dto.ProviderRatingsDTO;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
@@ -24,7 +25,8 @@ public class ScheduleServiceController {
 //    @PostMapping("/push-notification/{id-user}")
 //    public ResponseDTO PushNotification(@PathVariable(name = "id-user") String idUser) {
 //        try{
-//            return pushNotificationServices.prueba(idUser);
+//            scheduleServiceServices._SendNotifications(idUser, new NotificationDTO("typeEvent", "title", "message", "dataid"));
+//            return ResponseDTO.builder().build();
 //        } catch (Exception ex) {
 //            System.out.println(ex.getMessage());
 //            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();

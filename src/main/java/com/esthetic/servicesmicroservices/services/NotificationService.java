@@ -13,9 +13,8 @@ public class NotificationService {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserRepository userRepository;
     public void sendPrivateNotification(String userId, NotificationDTO notificationDTO) {
-        String userName = this.getUserName(userId);
         try{
-            messagingTemplate.convertAndSendToUser(userName, "/topic/queue/services", notificationDTO);
+            messagingTemplate.convertAndSendToUser(userId, "/topic/queue/services", notificationDTO);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
