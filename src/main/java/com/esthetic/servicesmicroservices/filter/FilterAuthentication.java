@@ -1,5 +1,6 @@
 package com.esthetic.servicesmicroservices.filter;
 
+import com.esthetic.servicesmicroservices.config.EnvConfig;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.google.gson.Gson;
 import jakarta.servlet.FilterChain;
@@ -7,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FilterAuthentication extends OncePerRequestFilter {
 
+    private final EnvConfig envConfig ;
     private static final List<String> EXCLUDED_PATH = Arrays.asList("/ws");
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -44,7 +47,7 @@ public class FilterAuthentication extends OncePerRequestFilter {
         HttpHeaders headers = new HttpHeaders();
         HttpEntity entity = new HttpEntity<>(headers);
         headers.set("Authorization", "Bearer " + token);
-        String apiUrl = "http://localhost:8002/api/esthetic/auth-user/get-data-user";
+        String apiUrl = envConfig.getApiGateway() + "/api/esthetic/auth-user/get-data-user";
 
         ResponseEntity<String> responseApi = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
 

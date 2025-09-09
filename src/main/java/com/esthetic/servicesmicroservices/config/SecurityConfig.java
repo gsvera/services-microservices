@@ -14,12 +14,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, FilterAuthentication filterAuthentication) throws Exception {
         http.csrf(csrf -> csrf.disable())
 //                .authorizeHttpRequests(auth -> auth
 //                        .anyRequest().permitAll() // o los que requieran auth
 //                )
-                .addFilterBefore(new FilterAuthentication(), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filterAuthentication, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

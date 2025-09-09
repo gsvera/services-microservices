@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 public class ScheduleService {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "id_client", insertable = true, updatable = true, nullable = false)
     @JsonBackReference
     private User idClient;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "id_provider", insertable = true, updatable = true, nullable = false)
     @JsonBackReference
     private User idProvider;
