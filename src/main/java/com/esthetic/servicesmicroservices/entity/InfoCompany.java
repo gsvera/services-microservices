@@ -18,6 +18,6 @@ public class InfoCompany {
     private User user;
     @Column(name = "company_name")
     private String companyName;
-    @Column(name = "company_picture")
-    private String companyPicture;
+    @Column(name = "company_picture_url")
+    private String companyPictureUrl;
 }
