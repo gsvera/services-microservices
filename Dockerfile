@@ -22,11 +22,8 @@ COPY --from=builder /build/target/*.jar app.jar
 #COPY wait-for-it.sh /wait-for-it.sh
 #RUN chmod +x /wait-for-it.sh
 
-# Copiar solo application-prod.properties y renombrarlo a application.properties
-COPY src/main/resources/application.properties /app/application.properties
-
 # Exponer el puerto del microservicio (ajusta si usas otro)
 EXPOSE 8082
 
 # Comando para arrancar el microservicio
-ENTRYPOINT ["java", "-jar", "/app/app.jar", "--spring.config.location=classpath:/application.properties"]
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]

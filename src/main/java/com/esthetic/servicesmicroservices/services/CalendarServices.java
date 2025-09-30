@@ -54,15 +54,23 @@ public class CalendarServices {
         LocalTime end = LocalTime.parse(endTime, formatter);
         LocalTime current = start;
 
-        while (current.plusMinutes(minDuration).compareTo(end.plusMinutes(minDuration)) < 0) {
+        while (current.isBefore(end)) {
             LocalTime next = current.plusMinutes(minDuration);
+
+            // Ajusta el slot final si se pasa del endTime
+            if (next.isAfter(end)) {
+                next = end;
+            }
+
             String startStr = current.format(formatter);
             String endStr = next.format(formatter);
 
-            boolean isReserved = listScheduleService.stream().anyMatch(item -> item.getStartTime().equals(startStr) && item.getEndTime().equals(endStr));
+            boolean isReserved = listScheduleService.stream()
+                                    .anyMatch(item -> item.getStartTime().equals(startStr)
+                                            && item.getEndTime().equals(endStr));
 
             if(!isReserved) {
-                listTimeSlot.add(new TimeSlotDTO(current.format(formatter), next.format(formatter)));
+                listTimeSlot.add(new TimeSlotDTO(startStr, endStr));
             }
 
             current = next;
