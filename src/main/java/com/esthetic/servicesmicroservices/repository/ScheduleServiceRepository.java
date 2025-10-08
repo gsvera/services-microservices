@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ScheduleServiceRepository extends JpaRepository<ScheduleService, Long> {
-    @Query(value = "SELECT s FROM ScheduleService s LEFT JOIN FETCH s.idClient c WHERE s.idProvider.id = ?1 AND s.scheduleDate = ?2 AND (c IS NOT NULL) ")
+    @Query(value = "SELECT s FROM ScheduleService s LEFT JOIN s.idClient c WHERE s.idProvider.id = ?1 AND s.scheduleDate = ?2 AND (s.idClient IS NULL OR s.idClient.id IN (SELECT u.id FROM User u))")
     List<ScheduleService> findByIdProvider(String idProvider, LocalDateTime date);
-    @Query(value = "SELECT s FROM ScheduleService s JOIN FETCH s.idClient c WHERE s.idProvider.id = ?1 AND s.scheduleDate = ?2 AND statusService = ?3")
+    @Query(value = "SELECT s FROM ScheduleService s LEFT JOIN s.idClient c WHERE s.idProvider.id = ?1 AND s.scheduleDate = ?2 AND statusService = ?3 AND (s.idClient IS NULL OR s.idClient.id IN (SELECT u.id FROM User u))")
     List<ScheduleService> findByIdProviderAndStatusService(String idProvider, LocalDateTime date, Integer statusService);
     @Query(value = "SELECT s FROM ScheduleService s WHERE idProvider.id  = ?1 AND scheduleDate = ?2 AND statusService NOT IN (-1, 2)")
     List<ScheduleService> findScheduleByProvider(String idProvider, LocalDateTime date);

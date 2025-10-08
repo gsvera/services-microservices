@@ -21,6 +21,10 @@ public class ScheduleServiceDTO {
     public int statusService;
     public String comments;
     public Timestamp createdAt;
+    public String tempNameClient;
+    public String tempLadaClient;
+    public String tempPhoneClient;
+    public Boolean saveTempClient;
     public ScheduleServiceDTO(){} // default constructor
     public ScheduleServiceDTO(ScheduleService scheduleService) {
         this.id = scheduleService.getId();
@@ -32,8 +36,13 @@ public class ScheduleServiceDTO {
         this.amount = scheduleService.getAmount();
         this.statusService = scheduleService.getStatusService();
         this.comments = scheduleService.getComments();
-        this.idClient = new UserDTO(scheduleService.getIdClient());
+        this.tempNameClient = scheduleService.getTempNameClient();
+        this.tempLadaClient = scheduleService.getTempLadaClient();
+        this.tempPhoneClient = scheduleService.getTempPhoneClient();
         this.idProvider = new UserDTO(scheduleService.getIdProvider());
         this.userLocationDTO = new UserLocationDTO(scheduleService.getUserLocation());
+        if(scheduleService.getIdClient() != null) {
+            this.idClient = new UserDTO(scheduleService.getIdClient());
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
 import com.esthetic.servicesmicroservices.services.ProviderRatingsServices;
 import com.esthetic.servicesmicroservices.services.PushNotificationServices;
 import com.esthetic.servicesmicroservices.services.ScheduleServiceServices;
+import com.esthetic.servicesmicroservices.services.TempClientServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,8 @@ public class ScheduleServiceController {
     private ProviderRatingsServices providerRatingsServices;
     @Autowired
     private PushNotificationServices pushNotificationServices;
+    @Autowired
+    private TempClientServices tempClientServices;
 //    @PostMapping("/push-notification/{id-user}")
 //    public ResponseDTO PushNotification(@PathVariable(name = "id-user") String idUser) {
 //        try{
@@ -36,6 +39,15 @@ public class ScheduleServiceController {
     public ResponseDTO MakeScheduleService(@RequestBody ScheduleServiceDTO scheduleServiceDTO) {
         try {
             return scheduleServiceServices._MakeScheduleServicec(scheduleServiceDTO);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @PostMapping("/make-our-schedule-service")
+    public ResponseDTO MakeScheduleOurService(@RequestBody ScheduleServiceDTO scheduleServiceDTO) {
+        try{
+            return scheduleServiceServices._MakeOurScheduleService(scheduleServiceDTO);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
@@ -104,6 +116,24 @@ public class ScheduleServiceController {
     public ResponseDTO GetRatingsByProvider(@PathVariable(name = "id-provider") String idProvider) {
         try{
             return providerRatingsServices._GetRatingsByProvider(idProvider);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @GetMapping("/get-temp-client-by-provider/{id-provider}")
+    public ResponseDTO GetTempClientByProvider(@PathVariable(name = "id-provider") String idProvider) {
+        try{
+            return tempClientServices._GetTempClientsByProvider(idProvider);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @DeleteMapping("/delete-temp-contact-by-provider/{id-provider}")
+    public ResponseDTO DeleteTempContactByProvider(@PathVariable(name = "id-provider") String idProvider, @RequestParam(name = "id-temp-contact") Long idTempContact) {
+        try {
+            return tempClientServices._DeleteTempContactByProvider(idProvider, idTempContact);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();

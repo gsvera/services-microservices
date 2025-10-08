@@ -3,12 +3,10 @@ package com.esthetic.servicesmicroservices.services;
 import com.esthetic.servicesmicroservices.dto.NotificationDTO;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
-import com.esthetic.servicesmicroservices.entity.CatalogStatusScheduleService;
-import com.esthetic.servicesmicroservices.entity.ProviderRatings;
-import com.esthetic.servicesmicroservices.entity.ScheduleService;
-import com.esthetic.servicesmicroservices.entity.User;
+import com.esthetic.servicesmicroservices.entity.*;
 import com.esthetic.servicesmicroservices.repository.CatalogStatusScheduleServiceRepository;
 import com.esthetic.servicesmicroservices.repository.ScheduleServiceRepository;
+import com.esthetic.servicesmicroservices.repository.TempClientRepository;
 import com.esthetic.servicesmicroservices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +27,7 @@ public class ScheduleServiceServices {
     private final NotificationService notificationService;
     private final PushNotificationServices pushNotificationServices;
     private final ProviderRatingsServices providerRatingsServices;
+    private final TempClientRepository tempClientRepository;
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
         Optional<User> user = userRepository.findById(scheduleServiceDTO.idClientAux);
         if(user.isPresent()) {
@@ -45,6 +44,20 @@ public class ScheduleServiceServices {
             return ResponseDTO.builder().message("Reservación generada con éxito").build();
         }
         return ResponseDTO.builder().error(true).message("Cliente no encontrado").build();
+    }
+    public ResponseDTO _MakeOurScheduleService(ScheduleServiceDTO scheduleServiceDTO) {
+        scheduleServiceDTO.createdAt = Timestamp.from(Instant.now());
+        ScheduleService scheduleService = new ScheduleService(scheduleServiceDTO);
+        scheduleServiceRepository.save(scheduleService);
+
+        if(scheduleServiceDTO.saveTempClient) {
+            Optional<TempClient> tempClient = tempClientRepository.findExistTempClient(scheduleServiceDTO.tempPhoneClient, scheduleServiceDTO.idProviderAux);
+            if(!tempClient.isPresent()){
+                TempClient newTempClient = new TempClient(scheduleServiceDTO.idProviderAux, scheduleServiceDTO.tempNameClient, scheduleServiceDTO.tempLadaClient, scheduleServiceDTO.tempPhoneClient);
+                tempClientRepository.save(newTempClient);
+            }
+        }
+        return ResponseDTO.builder().message("Reservación generada con éxito").build();
     }
     public void _SendNotifications(String idUser, NotificationDTO notificationDTO) {
         Optional<User> user = userRepository.findById(idUser);
@@ -84,17 +97,18 @@ public class ScheduleServiceServices {
             String message = "Cita para "+scheduleService.get().getNameService()+", el día " + scheduleService.get().getScheduleDate().toLocalDate() + ", se ha " + catalogStatusScheduleService.get().getStatusName();
 
             NotificationDTO notificationDTO = new NotificationDTO("update-schedule", "Actualización de cita", message, scheduleService.get().getId().toString());
-            this._SendNotifications(scheduleService.get().getIdClient().getId(), notificationDTO);
             this._SendNotifications(scheduleService.get().getIdProvider().getId(), notificationDTO);
-
-            if(catalogStatusScheduleService.get().getStatusDone()) {
-                providerRatingsServices._MakeRatingsByService(
-                        new ProviderRatings(
-                                scheduleService.get().getIdClient().getId(),
-                                scheduleService.get().getIdProvider().getId(),
-                                scheduleService.get().getId()
-                        )
-                );
+            if(scheduleService.get().getIdClient() != null) {
+                this._SendNotifications(scheduleService.get().getIdClient().getId(), notificationDTO);
+                if(catalogStatusScheduleService.get().getStatusDone()) {
+                    providerRatingsServices._MakeRatingsByService(
+                            new ProviderRatings(
+                                    scheduleService.get().getIdClient().getId(),
+                                    scheduleService.get().getIdProvider().getId(),
+                                    scheduleService.get().getId()
+                            )
+                    );
+                }
             }
 
             return ResponseDTO.builder().message("Se actualizo el estatus con éxito").build();
