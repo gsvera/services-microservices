@@ -56,6 +56,8 @@ public class FilterAuthentication extends OncePerRequestFilter {
             ResponseDTO responseDTO = objGson.fromJson(responseApi.getBody(), ResponseDTO.class);
             if(responseDTO.error != true) {
                 filterChain.doFilter(request, response);
+            } else {
+                sendErrorResponse(response, "Session expired", HttpServletResponse.SC_UNAUTHORIZED);
             }
         }
 
