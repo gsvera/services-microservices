@@ -9,6 +9,7 @@ import com.esthetic.servicesmicroservices.services.PushNotificationServices;
 import com.esthetic.servicesmicroservices.services.ScheduleServiceServices;
 import com.esthetic.servicesmicroservices.services.TempClientServices;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -45,9 +46,9 @@ public class ScheduleServiceController {
         }
     }
     @PostMapping("/make-our-schedule-service")
-    public ResponseDTO MakeScheduleOurService(@RequestBody ScheduleServiceDTO scheduleServiceDTO) {
+    public ResponseDTO MakeScheduleOurService(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ScheduleServiceDTO scheduleServiceDTO) {
         try{
-            return scheduleServiceServices._MakeOurScheduleService(scheduleServiceDTO);
+            return scheduleServiceServices._MakeOurScheduleService(token, scheduleServiceDTO);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();

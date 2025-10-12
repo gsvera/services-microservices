@@ -28,6 +28,7 @@ public class ScheduleServiceServices {
     private final PushNotificationServices pushNotificationServices;
     private final ProviderRatingsServices providerRatingsServices;
     private final TempClientRepository tempClientRepository;
+    private final UserService userService;
     public ResponseDTO _MakeScheduleServicec(ScheduleServiceDTO scheduleServiceDTO) {
         Optional<User> user = userRepository.findById(scheduleServiceDTO.idClientAux);
         if(user.isPresent()) {
@@ -45,7 +46,14 @@ public class ScheduleServiceServices {
         }
         return ResponseDTO.builder().error(true).message("Cliente no encontrado").build();
     }
-    public ResponseDTO _MakeOurScheduleService(ScheduleServiceDTO scheduleServiceDTO) {
+    public ResponseDTO _MakeOurScheduleService(String token, ScheduleServiceDTO scheduleServiceDTO) {
+
+        ResponseDTO responseDTO = userService._ValidIsActiveProvider(token, scheduleServiceDTO.idProviderAux);
+
+        if(responseDTO.error){
+            return responseDTO;
+        }
+
         scheduleServiceDTO.createdAt = Timestamp.from(Instant.now());
         ScheduleService scheduleService = new ScheduleService(scheduleServiceDTO);
         scheduleServiceRepository.save(scheduleService);

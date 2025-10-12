@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MenuServiceServices {
     private final MenuServiceRepository menuServiceRepository;
+    private final UserService userService;
     public ResponseDTO _GetMenuServiceByIdUser(String idUser){
         return ResponseDTO.builder().items(
                 menuServiceRepository.findByIdUser(idUser)
@@ -28,11 +29,19 @@ public class MenuServiceServices {
                         menuServiceRepository.findById(idMenuService).get()
                 )).build();
     }
-    public ResponseDTO _SaveMenuService(MenuServiceDTO menuServiceDTO) {
+    public ResponseDTO _SaveMenuService(String token, MenuServiceDTO menuServiceDTO) {
+        ResponseDTO responseDTO = userService._ValidIsActiveProvider(token, menuServiceDTO.idUser);
+        if(responseDTO.error) {
+            return responseDTO;
+        }
         menuServiceRepository.save(new MenuService(menuServiceDTO));
         return ResponseDTO.builder().message("Se guardo el registro con éxito").build();
     }
-    public ResponseDTO _UpdateMenuService(MenuServiceDTO menuServiceDTO) {
+    public ResponseDTO _UpdateMenuService(String token, MenuServiceDTO menuServiceDTO) {
+        ResponseDTO responseDTO = userService._ValidIsActiveProvider(token, menuServiceDTO.idUser);
+        if(responseDTO.error) {
+            return responseDTO;
+        }
         MenuService menuService = new MenuService(menuServiceDTO);
         menuService.setId(menuServiceDTO.id);
         menuServiceRepository.save(menuService);
