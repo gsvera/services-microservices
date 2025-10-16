@@ -9,4 +9,6 @@ import org.springframework.context.annotation.Configuration;
 public class EnvConfig {
     @Value("${my.property.api.gateway}")
     private String apiGateway;
+    @Value("${env.exponotificationurl}")
+    private String expoNotificationUrl;
 }

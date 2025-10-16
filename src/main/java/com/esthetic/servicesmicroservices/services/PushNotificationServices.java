@@ -1,9 +1,9 @@
 package com.esthetic.servicesmicroservices.services;
 
-import com.esthetic.servicesmicroservices.dto.ResponseDTO;
-import com.esthetic.servicesmicroservices.entity.User;
+import com.esthetic.servicesmicroservices.config.EnvConfig;
 import com.esthetic.servicesmicroservices.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -13,6 +13,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class PushNotificationServices {
     private final UserRepository userRepository;
+    @Autowired
+    private final EnvConfig envConfig;
 //
 //    public ResponseDTO prueba(String id) {
 //        Optional<User> user = userRepository.findById(id);
@@ -23,7 +25,7 @@ public class PushNotificationServices {
 //        return ResponseDTO.builder().error(true).message("no hay usuario").build();
 //    }
     public void sendPushNotification(String tokenNotification, String title, String body) {
-            String expoApiUrl = "https://exp.host/--/api/v2/push/send";
+            String expoApiUrl = envConfig.getExpoNotificationUrl();
 
             RestTemplate restTemplate = new RestTemplate();
 
