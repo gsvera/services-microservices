@@ -28,7 +28,7 @@ import java.util.List;
 public class FilterAuthentication extends OncePerRequestFilter {
 
     private final EnvConfig envConfig ;
-    private static final List<String> EXCLUDED_PATH = Arrays.asList("/ws");
+    private static final List<String> EXCLUDED_PATH = Arrays.asList("/ws", "/api/esthetic/public-schedule-service");
     @Override
     public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if(isExcludedPath(request)) {
