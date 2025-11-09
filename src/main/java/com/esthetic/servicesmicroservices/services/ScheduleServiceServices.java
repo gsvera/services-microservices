@@ -67,6 +67,16 @@ public class ScheduleServiceServices {
         }
         return ResponseDTO.builder().message("Reservación generada con éxito").build();
     }
+    public ResponseDTO _MakePublicScheduleService(ScheduleServiceDTO scheduleServiceDTO) {
+        scheduleServiceDTO.createdAt = Timestamp.from(Instant.now());
+        ScheduleService scheduleService = new ScheduleService(scheduleServiceDTO);
+        scheduleServiceRepository.save(scheduleService);
+
+        NotificationDTO notificationDTO = new NotificationDTO("new-schedule", "Nueva cita", "Se ha generado nueva cita para el día: "+ scheduleServiceDTO.scheduleDate.toLocalDate(), scheduleService.getId().toString());
+        this._SendNotifications(scheduleServiceDTO.idProviderAux, notificationDTO);
+
+        return ResponseDTO.builder().message("Reservación generada con éxito").build();
+    }
     public void _SendNotifications(String idUser, NotificationDTO notificationDTO) {
         Optional<User> user = userRepository.findById(idUser);
         if(user.isPresent() && user.get().getTokenNotification() != null) {

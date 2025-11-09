@@ -11,4 +11,6 @@ public class EnvConfig {
     private String apiGateway;
     @Value("${env.exponotificationurl}")
     private String expoNotificationUrl;
+    @Value("${url.hostname}")
+    private String hostname;
 }

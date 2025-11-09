@@ -4,10 +4,7 @@ import com.esthetic.servicesmicroservices.dto.NotificationDTO;
 import com.esthetic.servicesmicroservices.dto.ProviderRatingsDTO;
 import com.esthetic.servicesmicroservices.dto.ResponseDTO;
 import com.esthetic.servicesmicroservices.dto.ScheduleServiceDTO;
-import com.esthetic.servicesmicroservices.services.ProviderRatingsServices;
-import com.esthetic.servicesmicroservices.services.PushNotificationServices;
-import com.esthetic.servicesmicroservices.services.ScheduleServiceServices;
-import com.esthetic.servicesmicroservices.services.TempClientServices;
+import com.esthetic.servicesmicroservices.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +21,8 @@ public class ScheduleServiceController {
     private ProviderRatingsServices providerRatingsServices;
     @Autowired
     private PushNotificationServices pushNotificationServices;
+    @Autowired
+    private CalendarServices calendarServices;
     @Autowired
     private TempClientServices tempClientServices;
 //    @PostMapping("/push-notification/{id-user}")
@@ -49,6 +48,15 @@ public class ScheduleServiceController {
     public ResponseDTO MakeScheduleOurService(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @RequestBody ScheduleServiceDTO scheduleServiceDTO) {
         try{
             return scheduleServiceServices._MakeOurScheduleService(token, scheduleServiceDTO);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();
+        }
+    }
+    @PostMapping("/make-url-to-share-calendar/{id-provider}")
+    public ResponseDTO MakeUrlToShareCalendar(@RequestHeader(HttpHeaders.AUTHORIZATION) String token, @PathVariable(name = "id-provider") String idProvider) {
+        try{
+            return calendarServices._MakeUrlToShareCalendar(token, idProvider);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             return ResponseDTO.builder().error(true).message("Ocurrio un error intentelo mas tarde").build();

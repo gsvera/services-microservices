@@ -1,24 +1,24 @@
 package com.esthetic.servicesmicroservices.services;
 
-import com.esthetic.servicesmicroservices.dto.ResponseDTO;
-import com.esthetic.servicesmicroservices.dto.TimeSlotDTO;
-import com.esthetic.servicesmicroservices.dto.UserServicesCalendarDTO;
-import com.esthetic.servicesmicroservices.dto.UserServicesCalendarExceptionDTO;
+import com.esthetic.servicesmicroservices.config.EnvConfig;
+import com.esthetic.servicesmicroservices.dto.*;
 import com.esthetic.servicesmicroservices.entity.ScheduleService;
+import com.esthetic.servicesmicroservices.entity.ShareCalendar;
 import com.esthetic.servicesmicroservices.entity.UserServicesCalendar;
 import com.esthetic.servicesmicroservices.entity.UserServicesCalendarException;
-import com.esthetic.servicesmicroservices.repository.ScheduleServiceRepository;
-import com.esthetic.servicesmicroservices.repository.UserServicesCalendarExceptionRepository;
-import com.esthetic.servicesmicroservices.repository.UserServicesCalendarRepository;
+import com.esthetic.servicesmicroservices.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +27,10 @@ public class CalendarServices {
     private final UserServicesCalendarRepository userServicesCalendarRepository;
     private final UserServicesCalendarExceptionRepository userServicesCalendarExceptionRepository;
     private final ScheduleServiceRepository scheduleServiceRepository;
+    private final UserService userService;
+    private final ShareCalendarRepository shareCalendarRepository;
+    private final EnvConfig envConfig;
+    private final UserRepository userRepository;
     public ResponseDTO _GetCalendarByUser(String idUser) {
         return ResponseDTO.builder().items(
                 userServicesCalendarRepository.getCalendarByUser(idUser).stream().map(item -> new UserServicesCalendarDTO(item)).collect(Collectors.toList())
@@ -109,5 +113,73 @@ public class CalendarServices {
     public ResponseDTO _DeleteCalendarException(Long idException) {
         userServicesCalendarExceptionRepository.deleteById(idException);
         return ResponseDTO.builder().message("Registro eliminado con éxito").build();
+    }
+    public ResponseDTO _MakeUrlToShareCalendar(String token, String idProvider){
+        ResponseDTO responseDTO = userService._ValidIsActiveProvider(token, idProvider);
+
+        if(responseDTO.error){
+            return responseDTO;
+        }
+
+        String tokenCalendar = "";
+
+        Optional<ShareCalendar> shareCalendar = shareCalendarRepository.findByIdProvider(idProvider);
+
+        if(shareCalendar.isPresent()) {
+            if (_IsActiveToken(shareCalendar.get().getCreatedAt())) {
+                tokenCalendar = shareCalendar.get().getToken();
+            } else  {
+                shareCalendarRepository.delete(shareCalendar.get());
+            }
+        }
+
+        if(tokenCalendar.equals("")){
+            tokenCalendar = this._MakeTokenCalendar(idProvider);
+        }
+
+        String url = envConfig.getHostname() + "/calendar/"+ tokenCalendar;
+        return ResponseDTO.builder().items(url).build();
+    }
+    public Boolean _IsActiveToken(Instant createdAt) {
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
+        long millisecondsIn24Hours = 1000 * 60 * 60 * 24;
+
+        return currentTime.getTime() - createdAt.toEpochMilli() <= millisecondsIn24Hours;
+    }
+    public String _MakeTokenCalendar(String idProvider) {
+        UUID uuid = UUID.randomUUID();
+        String tokenCalendar = uuid.toString();
+        ShareCalendar newShareCalendar = new ShareCalendar(idProvider, tokenCalendar, Instant.now());
+        shareCalendarRepository.save(newShareCalendar);
+
+        return tokenCalendar;
+    }
+    public ShareCalendarDTO _IsValidToken(String token) {
+        Optional<ShareCalendar> shareCalendar = shareCalendarRepository.findByToken(token);
+        if(this._IsActiveToken(shareCalendar.get().getCreatedAt())) {
+            return new ShareCalendarDTO(shareCalendar.get());
+        }
+        return null;
+    }
+    public ResponseDTO _GetInfoProviderByUrlToken(String shareTokenCalendar) {
+        ShareCalendarDTO isActiveToken = this._IsValidToken(shareTokenCalendar);
+        if(isActiveToken != null) {
+            List<Object[]> result = userRepository.GetPublicInfoProvider(shareTokenCalendar);
+            if(!result.isEmpty()) {
+                Object[] userPublicInfo = result.get(0);
+                PublicInfoProviderDTO publicInfoProviderDTO = new PublicInfoProviderDTO();
+                publicInfoProviderDTO.id = (String) userPublicInfo[0];
+                publicInfoProviderDTO.companyName = (String) userPublicInfo[1];
+                publicInfoProviderDTO.companyPictureUrl = (String) userPublicInfo[2];
+                publicInfoProviderDTO.latitude = (double) userPublicInfo[3];
+                publicInfoProviderDTO.longitude = (double) userPublicInfo[4];
+                publicInfoProviderDTO.auxState = (String) userPublicInfo[5];
+                publicInfoProviderDTO.auxMunicipality = (String) userPublicInfo[6];
+                publicInfoProviderDTO.reference = (String) userPublicInfo[7];
+
+                return ResponseDTO.builder().items(publicInfoProviderDTO).build();
+            }
+        }
+        return ResponseDTO.builder().error(true).build();
     }
 }

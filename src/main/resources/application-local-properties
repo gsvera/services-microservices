@@ -17,3 +17,4 @@ spring.jpa.show-sql=false
 
 env.max_file_upload=5
 my.property.api.gateway=http://localhost:8002
+url.hostname=http://localhost:3000
