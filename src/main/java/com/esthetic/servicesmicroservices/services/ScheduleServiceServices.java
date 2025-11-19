@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +40,7 @@ public class ScheduleServiceServices {
             }
             scheduleServiceDTO.createdAt = Timestamp.from(Instant.now());
             ScheduleService scheduleService = new ScheduleService(scheduleServiceDTO, user.get());
+            scheduleService.setSendNotification(false);
             scheduleServiceRepository.save(scheduleService);
 
             NotificationDTO notificationDTO = new NotificationDTO("new-schedule", "Nueva cita", "Se ha generado nueva cita para el día: "+ scheduleServiceDTO.scheduleDate.toLocalDate(), scheduleService.getId().toString());
@@ -132,5 +135,19 @@ public class ScheduleServiceServices {
             return ResponseDTO.builder().message("Se actualizo el estatus con éxito").build();
         }
         return ResponseDTO.builder().error(true).message("No se encontro el registro").build();
+    }
+    public void _RememberDateSchedule() {
+        List<Object[]> listToNotification = scheduleServiceRepository.findServicesToSendNotification();
+        DateTimeFormatter input = DateTimeFormatter.ofPattern("HH:mm");
+        DateTimeFormatter output = DateTimeFormatter.ofPattern("hh:mm a");
+
+        for(Object[] item : listToNotification) {
+            String hour =  LocalTime.parse((String)item[1], input).format(output);
+            String nameCompany = (String) item[3];
+            String tokenNotification = (String) item[2];
+            String message = "Recuerda tu cita de hoy a las "+hour+" con " + nameCompany;
+            pushNotificationServices.sendPushNotification(tokenNotification, "Recordatorio de cita", message);
+            scheduleServiceRepository.updateSendNotification((Long) item[0]);
+        }
     }
 }

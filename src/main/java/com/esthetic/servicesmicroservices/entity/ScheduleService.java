@@ -50,6 +50,8 @@ public class ScheduleService {
     private String tempLadaClient;
     @Column(name = "temp_phone_client")
     private String tempPhoneClient;
+    @Column(name = "send_notification")
+    private Boolean sendNotification;
     public ScheduleService(){} // default constructor
     public ScheduleService(ScheduleServiceDTO scheduleServiceDTO) {
         this.scheduleDate = scheduleServiceDTO.scheduleDate;
